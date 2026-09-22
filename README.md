@@ -95,7 +95,7 @@ The AI pipeline runs on a free **Google Colab / Kaggle T4 GPU**. The frontend co
 | Object Removal | LaMa (simple-lama-inpainting) |
 | Object Recolor / Texture | OpenCV (LAB color space, no generative model) for color/uploaded texture; localized inpainting for AI-generated materials |
 | Prompt Enhancement (optional) | A free chat model via OpenRouter, called server-side only |
-| GPU Runtime | Google Colab / Kaggle (T4 GPU, free tier) — also prepared for Hugging Face Spaces ZeroGPU (`backend/hf_space/`), not yet deployed |
+| GPU Runtime | Google Colab / Kaggle (T4 GPU, free tier) |
 | Tunnel | ngrok, bearer-token authenticated |
 | Local backend (optional) | Flask (Python) — multi-engine fallback (Gemini/OpenAI/Replicate), not in the default request path |
 
