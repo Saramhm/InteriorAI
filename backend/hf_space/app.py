@@ -1,5 +1,5 @@
 # InteriorAI backend — Hugging Face Spaces (ZeroGPU) port of
-# backend/Original_Interior_Colab_Launch.ipynb.
+# backend/main.ipynb.
 #
 # Why this file exists: the Colab notebook needs a human to open it, wait for
 # it to boot, and paste a fresh ngrok URL + connection key into the frontend

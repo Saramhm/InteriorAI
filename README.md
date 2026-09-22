@@ -129,7 +129,7 @@ Ai_interior_Designer_original/
 │           └── ...
 │
 ├── backend/
-│   ├── Original_Interior_Colab_Launch.ipynb   # Run this for AI generation (live app / demo)
+│   ├── main.ipynb                        # Run this for AI generation (live app / demo)
 │   ├── Evaluation_Report_Chapter12.ipynb      # Separate, offline: quantitative eval + report charts/Excel
 │   ├── Experimental_Depth_ControlNet_Kaggle.ipynb  # Separate depth-based experiment
 │   ├── app.py                            # Optional local multi-engine proxy (Gemini/OpenAI/Replicate)
@@ -155,7 +155,7 @@ Opens at `http://localhost:3000`.
 
 ### 2. AI backend (required for generation)
 
-1. Open `backend/Original_Interior_Colab_Launch.ipynb` in Google Colab or Kaggle
+1. Open `backend/main.ipynb` in Google Colab or Kaggle
 2. Runtime → Change runtime type → **T4 GPU**
 3. Runtime → Run all (a fresh **Disconnect and delete runtime** first if you've run it before and hit an install error)
 4. The last cell prints `BACKEND_URL` and `CONNECTION_KEY`, and also writes them to Firestore — the app picks the connection up automatically within a few seconds. If that doesn't happen (or you're on `localhost`), click **Connection** in the app and paste both values in manually.

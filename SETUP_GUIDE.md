@@ -25,7 +25,7 @@ Opens at `http://localhost:3000`. Sign in (Firebase email/password or Google) �
 
 ## 2. Start the AI backend
 
-1. Open `backend/Original_Interior_Colab_Launch.ipynb` in Google Colab (or Kaggle — the notebook auto-detects the environment)
+1. Open `backend/main.ipynb` in Google Colab (or Kaggle — the notebook auto-detects the environment)
 2. **Runtime → Change runtime type → T4 GPU**
 3. **Runtime → Run all**
    - First run: model downloads take a few minutes
