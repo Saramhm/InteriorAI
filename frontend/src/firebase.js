@@ -4,12 +4,13 @@ import { getStorage } from "firebase/storage";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAap1KhJxHC7gPkeuofMZ8u7S5rYv16Giw",
-  authDomain: "ai-interior-designer-b4c9d.firebaseapp.com",
-  projectId: "ai-interior-designer-b4c9d",
-  storageBucket: "ai-interior-designer-b4c9d.firebasestorage.app",
-  messagingSenderId: "878741315473",
-  appId: "1:878741315473:web:b825cb3d5aae7088d10430"
+  apiKey: "AIzaSyBfe7hrAKoHzwIJHoVg7JDrceqD-awPIBs",
+  authDomain: "ai-interior-designer-b4c-30541.firebaseapp.com",
+  projectId: "ai-interior-designer-b4c-30541",
+  storageBucket: "ai-interior-designer-b4c-30541.firebasestorage.app",
+  messagingSenderId: "61735218275",
+  appId: "1:61735218275:web:454a6517e6a7553f3a1c56",
+  measurementId: "G-2GCFED09WT"
 };
 
 const app = initializeApp(firebaseConfig);
