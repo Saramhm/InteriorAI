@@ -1,0 +1,27 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+.env
+
+# Flask uploads/outputs
+backend/uploads/
+backend/outputs/
+
+# Node
+node_modules/
+build/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Colab
+*.ipynb_checkpoints/
+
+# Local workarounds / scratch
+backend/.local-deps/
+backend/.parsed-notebook.json
+
+# Local tooling config (machine-specific, not project code)
+.claude/settings.local.json

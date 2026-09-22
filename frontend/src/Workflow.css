@@ -1,0 +1,74 @@
+.operation-tabs,.tool-actions,.custom-colors,.region-list{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}
+.operation-tabs button{flex:1 1 200px;max-width:260px;min-width:155px;padding:16px}
+.app button{font:inherit;cursor:pointer}.app button:disabled{opacity:.45;cursor:not-allowed}
+.tool-panel{border:1px solid #655833;border-radius:16px;background:#161616;padding:24px;margin:24px 0;color:#eee}
+.tool-panel p{color:#bbb;line-height:1.7;margin:12px 0}.tool-panel h2{margin-bottom:14px}
+.tool-panel button,.tool-actions button,.operation-tabs button{background:#242424;color:#eee;border:1px solid #655833;border-radius:8px;padding:10px 16px}
+.app button[aria-pressed=true],.tool-panel button.selected{border-color:#e6b846;background:#463b20;color:#ffe6a0}
+.tool-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:12px;margin:20px 0}
+.tool-grid button{text-align:left}.tool-grid small,.tool-grid strong{display:block;margin:7px 0}
+.field-label{display:block;margin:20px 0}.field-label textarea{display:block;width:100%;min-height:95px;box-sizing:border-box;background:#222;border:1px solid #666;color:#fff;border-radius:8px;padding:12px;margin-top:8px;font:inherit;resize:vertical}
+.field-hint{font-size:13px;color:#999;line-height:1.6;margin:-8px 0 16px;padding:10px 12px;background:#1c1c1c;border:1px solid #443a22;border-radius:8px}.field-hint strong{color:#e6b846;font-weight:600}
+.enhanced-prompt-note{margin:16px 0;border-color:#655833;color:#ccc}
+.tool-panel .primary-action{background:#c9a84c;color:#151515;font-weight:600;margin:10px 0}
+.current-room{display:block;max-width:100%;max-height:460px;margin:22px auto;object-fit:contain;border-radius:12px}
+.selection-canvas{display:block;width:100%;height:auto;touch-action:none;cursor:crosshair;border-radius:10px}
+/* No auto-centering here: region-picker sits directly under other full-width
+   buttons/rows in each tool panel (e.g. Object Recolor's "Single area" row) —
+   centering it with `margin:0 auto` on wide screens shifted its own button row
+   right of everything above it, an outright misalignment bug, not a style choice. */
+.region-picker{max-width:950px}
+.region-list{max-height:220px;overflow:auto}
+.selection-chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:14px 0}
+.chip{display:inline-flex;align-items:center;gap:6px;background:#242424;border:1px solid #655833;border-radius:20px;padding:6px 8px 6px 14px;color:#eee;font-size:14px}
+.chip button{background:none;border:none;color:#e6b846;font-size:16px;line-height:1;padding:0 4px;cursor:pointer}
+.chip-clear{background:none;border:1px solid #655833;border-radius:20px;padding:6px 14px;color:#bbb;cursor:pointer;font-size:13px}
+.toggle-check{display:flex;align-items:center;gap:8px;background:#242424;color:#eee;border:1px solid #655833;border-radius:8px;padding:10px 16px;cursor:pointer}
+.toggle-check input{width:16px;height:16px;accent-color:#e6b846}
+.preview-panel img{display:block;max-width:100%;max-height:400px;margin:16px 0}.preview-panel{margin-top:20px}
+.color-swatches{display:flex;margin:12px 0}.color-swatches span{width:28px;height:28px;display:inline-block}
+.custom-colors label{display:flex;flex-direction:column;gap:8px}.custom-colors input{width:75px;height:45px}
+.operation-status-overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.45);backdrop-filter:blur(3px);z-index:9999}
+.operation-status{width:min(420px,90vw);border-radius:24px;padding:32px 24px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(10,15,30,.9);border:1px solid rgba(230,184,70,.25);box-shadow:0 0 60px rgba(230,184,70,.1)}
+.ai-circle-wrapper{width:220px;height:220px;position:relative;display:flex;align-items:center;justify-content:center}
+.ai-circle{width:170px;height:170px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;position:relative;z-index:2;background:radial-gradient(circle,rgba(230,184,70,.12),rgba(20,18,10,.8));box-shadow:0 0 40px rgba(230,184,70,.2),inset 0 0 30px rgba(255,255,255,.06)}
+.ai-circle video{width:100%;height:100%;object-fit:cover}
+.orbit{position:absolute;border-radius:50%;border:2px solid transparent}
+.orbit-one{width:210px;height:210px;border-top-color:#e6b846;border-right-color:rgba(230,184,70,.35);animation:spin 7s linear infinite}
+.orbit-two{width:190px;height:190px;border-bottom-color:#8b5cf6;border-left-color:rgba(139,92,246,.45);animation:spinReverse 5s linear infinite}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes spinReverse{from{transform:rotate(360deg)}to{transform:rotate(0deg)}}
+.status-text{margin-top:22px;text-align:center;color:#fff;font-size:18px}
+.status-text span{display:block;margin-top:8px;opacity:.65;font-size:13px}
+.result-fieldset{border:0;padding:0;margin-top:35px;min-width:0}.history-image{width:100%;height:140px;object-fit:contain}
+.app button:focus-visible,.app textarea:focus-visible{outline:3px solid #e6b846;outline-offset:3px}
+.header .logo{background:none;border:0;color:inherit}
+.model-toggle{display:flex;gap:2px;background:#1a1710;border:1px solid #655833;border-radius:8px;padding:3px}
+.model-toggle button{padding:7px 14px;font-size:12px;border:0;border-radius:6px;background:transparent}
+.reference-preview{max-width:220px;max-height:220px;border-radius:10px;display:block;margin:0 auto}
+.style-gallery{margin:18px 0}
+.style-gallery-picks{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.style-gallery-pick{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;font-size:13px;border-radius:10px;white-space:nowrap;
+  background:#1a1710;border:1px solid #4a4326;color:#a8a196;transition:border-color .18s,color .18s,transform .18s,background .18s}
+.style-gallery-pick:hover:not(:disabled){border-color:#8a7a45;color:#eee;transform:translateY(-1px)}
+.style-gallery-pick[aria-pressed=true]{background:#463b20;border-color:#e6b846;color:#ffe6a0}
+.style-gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-top:14px}
+.style-gallery-item{padding:0;overflow:hidden;border-radius:10px;text-align:left}
+.style-gallery-item img{display:block;width:100%;aspect-ratio:1;object-fit:cover}
+.style-gallery-item span{display:block;padding:8px 10px;font-size:12px}
+.style-gallery-item.selected{border-color:#e6b846}
+
+/* ─── Hover tooltips (styles, textures) ──────────────────────
+   CSS-only so any button gets one just by adding data-tooltip="…". */
+[data-tooltip]{position:relative}
+[data-tooltip]:hover::after,[data-tooltip]:focus-visible::after{
+  content:attr(data-tooltip);position:absolute;bottom:calc(100% + 9px);left:50%;transform:translateX(-50%);
+  background:#161310;color:#f0e6c8;border:1px solid #655833;border-radius:8px;padding:8px 12px;
+  font-size:12px;line-height:1.45;font-weight:400;letter-spacing:0;white-space:normal;width:max-content;max-width:210px;
+  text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.5);z-index:80;pointer-events:none
+}
+[data-tooltip]:hover::before,[data-tooltip]:focus-visible::before{
+  content:'';position:absolute;bottom:100%;left:50%;transform:translateX(-50%);margin-bottom:3px;
+  border:5px solid transparent;border-top-color:#655833;z-index:80;pointer-events:none
+}
+@media(max-width:650px){.tool-panel{padding:14px}.header-inner{flex-wrap:wrap;gap:14px}.operation-tabs button{min-width:135px}.main{padding-left:12px;padding-right:12px}}
