@@ -12,7 +12,7 @@ import ObjectRecolor from './components/ObjectRecolor';
 import ResultView from './components/ResultView';
 import { ToastProvider, useToast } from './components/Toast';
 import { getApiUrl } from './config';
-import { apiRequest, imageSource } from './services/api';
+import { apiRequest, imageSource, furnishRequest } from './services/api';
 import { translateToEnglish } from './utils/translate';
 import { enhancePrompt } from './utils/enhancePrompt';
 import { downscaleImage } from './utils/downscaleImage';
@@ -153,6 +153,77 @@ function AppInner() {
   // The rewritten text used to only show as a toast, which had already faded by the
   // time a slow generation finished -- enhancedPrompt keeps it on screen (see the
   // note rendered next to the result below) for as long as it's still the one in effect.
+  const imageUrlToBase64 = async(url)=>{
+
+  const response = await fetch(url);
+
+  if(!response.ok){
+    throw new Error("Object image loading failed");
+  }
+
+  const blob = await response.blob();
+
+  return new Promise((resolve,reject)=>{
+
+    const reader = new FileReader();
+
+    reader.onloadend=()=>{
+      resolve(reader.result);
+    };
+
+    reader.onerror=reject;
+
+    reader.readAsDataURL(blob);
+
+  });
+
+};
+
+
+const runFurnish = async(prompt, options={})=>{
+
+  if(!current)return;
+
+  let objectImage=null;
+
+
+  if(options.mode==="reference" && options.object){
+
+    objectImage = await imageUrlToBase64(
+      options.object.url
+    );
+
+  }
+
+
+  const data = await run(
+    'Adding object...',
+    request =>
+      furnishRequest(
+        activeUrl.current,
+        {
+          image: current.image,
+          prompt,
+          mode: options.mode || "inpaint",
+          selection: requestSelection(),
+
+          ...(options.mode==="reference" && objectImage
+            ? {
+                object_image: objectImage
+              }
+            :
+              {})
+        },
+        {
+          signal: request.signal
+        }
+      )
+  );
+
+
+  if(data) commit(data,'furnish');
+
+};
   const enhanceAndToast=async text=>{
     const out=await enhancePrompt(activeUrl.current,text);
     const changed=out && out!==text;
@@ -160,6 +231,7 @@ function AppInner() {
     if(changed)toast(`Prompt enhanced: "${out}"`,'info',6000);
     return out;
   };
+  
   const apply=async(path,fields,label)=>{
     if(!current)return;
     setEnhancedPrompt(null);
@@ -347,14 +419,16 @@ function AppInner() {
                 const timeoutMs=60000+styleIds.length*25000;
                 return run('Sketching quick previews…',request=>request('/preview-styles',{image:current.image,styles:styleIds,palette:p,model:genModel,draft:true}),timeoutMs);
               }}/></>}
-          {tool==='furnish' && <FurnishRoom image={current.image} busy={!!busy} selection={selection} onSelect={setSelection}
-            onFurnish={(prompt,libraryImage)=>{
-              // libraryImage set = "From Library" mode: place this exact catalog item,
-              // same underlying call as Add Object From Photo, just sourced from our
-              // built-in library instead of a user upload.
-              if(libraryImage)return addObject(libraryImage,prompt,'library');
-              const sel=requestSelection();if(sel!==undefined)apply('/furnish-room',{prompt,selection:sel},'furnish');
-            }}/>}
+          {tool==='furnish' && 
+              <FurnishRoom 
+                image={current.image}
+                busy={!!busy}
+                selection={selection}
+                onSelect={setSelection}
+                onFurnish={runFurnish}
+                apiUrl={apiUrl}
+              />
+            }
           {tool==='object' && <ObjectEditor image={current.image} regions={regions} selection={selection} busy={!!busy} onSelect={setSelection}
             onDetect={detect} onPoint={point} onEdit={(action,prompt)=>{const sel=requestSelection();if(sel!==undefined)apply(action==='delete'?'/delete-object':'/edit-object',{selection:sel,prompt},action);}}/>}
           {tool==='recolor' && <ObjectRecolor image={current.image} regions={regions} selection={selection} busy={!!busy} onSelect={setSelection}
