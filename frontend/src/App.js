@@ -66,8 +66,11 @@ function AppInner() {
   useEffect(()=>()=>pending.current?.abort(),[]);
   useEffect(()=>onSnapshot(doc(db,'config','colab_url'),snap=>{
     if(snap.exists()){
-      const {url,active}=snap.data();
-      if(typeof url==='string' && active){changeUrl(url);setSetup(false);}
+      const {url,active,key}=snap.data();
+      if(typeof url==='string' && active){
+        if(typeof key==='string' && key)localStorage.setItem('interiorai_connection_key',key);
+        changeUrl(url);setSetup(false);
+      }
     }
   },()=>{/* Manual URL remains available if Firestore is unavailable. */}),[changeUrl]);
   useEffect(()=>{

@@ -2,6 +2,8 @@
 
 > Transform any room photo into a professionally redesigned space using AI.
 
+**Live:** [interiorai.novaralab.net](https://interiorai.novaralab.net) — the AI backend only runs while someone has the Colab/Kaggle notebook open, so generation works only while it's connected; sign-in and browsing always work.
+
 Started from a teammate's project ([AlirezaGfr98/Ai_interior_Designer](https://github.com/AlirezaGfr98/Ai_interior_Designer), kept here as the `upstream` remote). This repo tracks my own work on top of it — see **[My Contribution](#my-contribution)** below for exactly what's mine versus the shared baseline.
 
 ---
@@ -10,7 +12,7 @@ Started from a teammate's project ([AlirezaGfr98/Ai_interior_Designer](https://g
 
 Upload a room photo, then:
 - Apply one of 20 design styles, or describe your own, or just change the color palette without touching the style
-- Add a specific object from a reference photo (not a text description — the actual item)
+- Redesign the whole room to match a reference photo's style (IP-Adapter whole-room transfer) instead of picking from the preset list
 - Edit, delete, or recolor individual detected objects
 - Furnish an empty area with new items — describe what to add, or place an exact piece from a built-in ~420-item furniture catalog
 
@@ -26,7 +28,7 @@ The room's structure (walls, windows, doors, layout) stays intact throughout —
 | **Fast Preview Gallery** | Low-res, ~10x faster drafts of chosen styles side by side, to pick a direction before spending full generation time |
 | **Colors Only mode** | Change just the wall/decor colors — layout and furniture untouched, no style bias applied |
 | **Color Palettes** | 16 presets (filterable by mood: warm/cool/neutral/bold/pastel/dark) + custom color picker, usable with a style or standalone |
-| **Add Object From Photo** | Insert a specific item from a reference image (IP-Adapter Plus), not a text guess; localized to a marked spot when one is selected |
+| **Redesign From Reference Photo** | Upload a photo of a room you like — the whole room is restyled to match its look (materials, palette, furniture character) via IP-Adapter, instead of choosing from the 20 preset styles |
 | **Object Edit / Delete / Recolor / Texture** | Click-to-select (single or multiple at once) or draw a region; edit with a text prompt, remove cleanly (LaMa), recolor exactly (pixel-level, no model), or apply a material — an uploaded swatch or an AI-generated one (leather, stone, velvet, etc.) |
 | **AI Prompt Enhancer** (optional) | Rewrites a typed prompt into more specific visual detail via a free OpenRouter chat model before generation — server-side key only, nothing to configure per visitor |
 | **Fast / Quality toggle** | SD1.5 (quick) or SDXL (slower, more photorealistic) per generation |
@@ -42,7 +44,7 @@ The teammate's baseline (and a later rewrite they pushed) provided a genuinely g
 - **Dual-model system** — SD1.5 (fast) and SDXL (quality), lazily loaded so only one is ever resident in GPU memory at a time, with a Fast/Quality toggle in the UI
 - **Photorealism checkpoints** — swapped the vanilla base models for community fine-tunes (Realistic Vision for SD1.5, Juggernaut XL for SDXL)
 - **Fixed the core generation bug** — the pipeline was generating from the Canny edge map alone, never the real photo; switched to Img2Img so the model actually starts from real pixels
-- **Add Object From Photo** — new end-to-end feature (frontend tool + backend IP-Adapter pipeline) that didn't exist before
+- **Redesign From Reference Photo** — whole-room style transfer via IP-Adapter: upload a photo of a room you like and the current room is restyled to match it, instead of picking from the preset style list (a bonus feature from the assignment spec). An earlier "Add Object From Photo" tool (paste one exact item from an uploaded reference image) was removed after real-world testing showed it couldn't place objects precisely enough without reliable background removal — the exact-placement need is now covered by Furnish → From Library instead, which pastes real pre-cut catalog pixels rather than a generative approximation
 - **Furnish-from-catalog** — merged a teammate's separate fork's furniture object library (~420 pre-cut PNGs, 21 categories, English + Persian search aliases) into Furnish Room as a second mode alongside the existing AI-prompt placement. Rebuilt the placement technique rather than importing it as-is: the source version ran a full-rectangle inpaint at strength 0.95 over the pasted object, which risked the model repainting the precisely-placed item into something else; this version masks only the object's own silhouette (dilated for a contact shadow) at a much gentler strength, so the exact pasted pixels survive and only the surrounding lighting/shadow gets blended in. Also didn't bring over the source's standalone inpainting pipeline (it loaded a second, always-resident SDXL model outside this project's single-pipeline-residency scheme, with no EXIF/megapixel/CLIP-budget handling) — the catalog item and library/alias data are new, everything else routes through this project's own already-hardened generation path
 - **Object Recolor** — deterministic OpenCV/LAB color remapping, no generative model, so results are pixel-accurate instead of approximate
 - **LaMa-based object deletion** — replaced repurposed inpainting ("generate nothing here") with a model built specifically for background reconstruction
@@ -76,10 +78,10 @@ Styled Room Image
     ├─► Object Editing: YOLOv8 + SAM + SegFormer detect → localized inpaint
     ├─► Object Deletion: LaMa background reconstruction
     ├─► Object Recolor: OpenCV LAB channel remap (no model)
-    └─► Add Object: IP-Adapter blends a reference photo's item into the room
+    └─► Redesign From Reference: IP-Adapter blends a reference photo's whole style into the room
 ```
 
-The AI pipeline runs on a free **Google Colab / Kaggle T4 GPU**. The frontend connects directly to the notebook's Flask server via an authenticated ngrok tunnel — paste the URL and connection key printed by the notebook's last cell into the app's "Connect AI Backend" dialog.
+The AI pipeline runs on a free **Google Colab / Kaggle T4 GPU**. The frontend connects to the notebook's Flask server via an authenticated ngrok tunnel — either automatically (the notebook writes `BACKEND_URL`/`CONNECTION_KEY` to Firestore and the app picks it up within a few seconds), or manually by pasting both values printed by the notebook's last cell into the app's "Connect AI Backend" dialog.
 
 ---
 
@@ -106,21 +108,22 @@ Ai_interior_Designer_original/
 ├── frontend/
 │   ├── generateObjectLibrary.js          # Regenerates data/objectLibrary.js from public/objects/
 │   ├── public/objects/                   # ~420 pre-cut furniture PNGs, 21 categories
+│   ├── Dockerfile, nginx.conf            # Production container build (served behind nginx)
 │   └── src/
 │       ├── App.js                        # State hub, request handling, translation
 │       ├── config.js                     # API URL + connection key resolution
+│       ├── firebase.js                   # Firebase Auth + Firestore (auto-connect) config
 │       ├── utils/translate.js            # Persian → English prompt translation
 │       ├── data/
 │       │   ├── objectLibrary.js          # Generated: {category: [{name, url}]}
 │       │   └── objectAliases.js          # English + Persian search terms per category
 │       └── components/
-│           ├── StyleSelector.js          # 20 styles, custom prompt, Colors Only mode
+│           ├── StyleSelector.js          # 20 styles, custom prompt, Colors Only mode, Redesign From Reference
 │           ├── StyleGallery.js           # Fast draft-preview gallery
 │           ├── ColorPaletteSelector.js   # Presets + custom palette
 │           ├── RegionSelector.js         # Click / draw / point-based selection
 │           ├── ObjectEditor.js           # Edit / delete selected object
 │           ├── ObjectRecolor.js          # Exact recolor of a selected object
-│           ├── AddObjectFromPhoto.js     # IP-Adapter reference-photo insertion
 │           ├── FurnishRoom.js            # AI-prompt placement + from-catalog placement
 │           ├── BackendSetup.js           # Connect AI Backend (URL + connection key)
 │           └── ...
@@ -132,6 +135,7 @@ Ai_interior_Designer_original/
 │   ├── app.py                            # Optional local multi-engine proxy (Gemini/OpenAI/Replicate)
 │   └── requirements.txt
 │
+├── SETUP_GUIDE.md                        # Step-by-step run instructions (frontend + notebook)
 └── README.md
 ```
 
@@ -151,11 +155,12 @@ Opens at `http://localhost:3000`.
 
 ### 2. AI backend (required for generation)
 
-1. Open `backend/Original_Interior_Colab_Launch.ipynb` in Google Colab
+1. Open `backend/Original_Interior_Colab_Launch.ipynb` in Google Colab or Kaggle
 2. Runtime → Change runtime type → **T4 GPU**
 3. Runtime → Run all (a fresh **Disconnect and delete runtime** first if you've run it before and hit an install error)
-4. Copy the `BACKEND_URL` and `CONNECTION_KEY` printed by the last cell
-5. In the app, click **Connection** → paste both values
+4. The last cell prints `BACKEND_URL` and `CONNECTION_KEY`, and also writes them to Firestore — the app picks the connection up automatically within a few seconds. If that doesn't happen (or you're on `localhost`), click **Connection** in the app and paste both values in manually.
+
+See [SETUP_GUIDE.md](SETUP_GUIDE.md) for troubleshooting.
 
 ### 3. Local Flask proxy (optional)
 

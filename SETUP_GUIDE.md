@@ -9,7 +9,7 @@ Two parts:
 | **Frontend** (React) | The UI users interact with | While `npm start` is running |
 | **Colab/Kaggle notebook** | Runs the AI models (GPU) | No — start it manually, connect the frontend to it each session |
 
-Unlike the earlier version of this project, the frontend does **not** auto-connect via Firestore. You connect it manually each time you start a fresh notebook session — this is deliberate: it avoids depending on a write-open Firestore document as a connection mechanism.
+The frontend auto-connects via Firestore: the notebook's last cell writes `BACKEND_URL`/`CONNECTION_KEY` to a `config/colab_url` document, and the app picks it up within a few seconds of the notebook coming up. If Firestore is unreachable (or you're testing against `localhost`), connect manually instead — see step 3.
 
 ---
 
@@ -30,7 +30,7 @@ Opens at `http://localhost:3000`. Sign in (Firebase email/password or Google) �
 3. **Runtime → Run all**
    - First run: model downloads take a few minutes
    - If you hit an install error (numpy/diffusers import errors), do **Runtime → Disconnect and delete runtime** first, not just Restart — a plain restart can leave a previous run's partially-installed packages on disk
-4. The last cell prints two values once everything is up:
+4. The last cell prints two values once everything is up, and also writes them to Firestore for auto-connect:
    ```
    BACKEND_URL: https://xxxx.ngrok-free.app
    CONNECTION_KEY: <a long random string>
@@ -38,7 +38,7 @@ Opens at `http://localhost:3000`. Sign in (Firebase email/password or Google) �
 
 ## 3. Connect the frontend to it
 
-In the app, click the **Connection** pill in the header → paste `BACKEND_URL` into the URL field and `CONNECTION_KEY` into the connection key field → Connect.
+Usually automatic — the app is listening for the Firestore write and connects within a few seconds. If it doesn't (Firestore write failed, or you're testing locally), connect manually: click the **Connection** pill in the header → paste `BACKEND_URL` into the URL field and `CONNECTION_KEY` into the connection key field → Connect.
 
 Every request needs that key — the notebook rejects anything without a matching `Authorization: Bearer <key>` header, so the ngrok tunnel isn't usable by anyone who doesn't have it.
 
