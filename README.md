@@ -4,7 +4,7 @@
 
 **Live:** [interiorai.novaralab.net](https://interiorai.novaralab.net) — the AI backend only runs while someone has the Colab/Kaggle notebook open, so generation works only while it's connected; sign-in and browsing always work.
 
-Started from a teammate's project, kept as a separate `upstream` remote. This repo tracks my own work on top of it — see **[My Contribution](#my-contribution)** below for exactly what's mine versus the shared baseline.
+
 
 ---
 
