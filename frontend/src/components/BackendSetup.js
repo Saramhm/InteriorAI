@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { getApiUrl, getConnectionKey, saveApiUrl } from "../config";
 import "./BackendSetup.css";
 
 const MODES = [
@@ -22,8 +23,8 @@ const MODES = [
 ];
 
 export default function BackendSetup({ onConnect }) {
-  const saved = localStorage.getItem("interiorai_api_url") || "";
-  const savedKey = localStorage.getItem("interiorai_connection_key") || "";
+  const saved = getApiUrl();
+  const savedKey = getConnectionKey();
   const guessMode = saved.includes("localhost") ? "local" : "colab";
 
   const [mode, setMode] = useState(guessMode);
@@ -65,8 +66,7 @@ export default function BackendSetup({ onConnect }) {
       });
       const data = await res.json();
       if (res.ok && data.api_version === 2) {
-        localStorage.setItem("interiorai_api_url", clean);
-        localStorage.setItem("interiorai_connection_key", key);
+        saveApiUrl(clean, key);
         setStatus("ok");
         setTimeout(() => onConnect(clean, data), 700);
       } else if (res.status === 401) {
@@ -88,8 +88,7 @@ export default function BackendSetup({ onConnect }) {
 
   const handleSkip = () => {
     const clean = url.trim().replace(/\/$/, "") || "http://localhost:7860";
-    localStorage.setItem("interiorai_api_url", clean);
-    localStorage.setItem("interiorai_connection_key", connectionKey.trim());
+    saveApiUrl(clean, connectionKey.trim());
     onConnect(clean, null);
   };
 

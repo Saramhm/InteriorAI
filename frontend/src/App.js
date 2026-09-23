@@ -11,7 +11,7 @@ import ObjectEditor from './components/ObjectEditor';
 import ObjectRecolor from './components/ObjectRecolor';
 import ResultView from './components/ResultView';
 import { ToastProvider, useToast } from './components/Toast';
-import { getApiUrl } from './config';
+import { getApiUrl, saveApiUrl } from './config';
 import { apiRequest, imageSource, furnishRequest } from './services/api';
 import { translateToEnglish } from './utils/translate';
 import { enhancePrompt } from './utils/enhancePrompt';
@@ -57,7 +57,7 @@ function AppInner() {
     const clean=url.trim().replace(/\/+$/,'');
     if(clean===activeUrl.current)return;
     activeUrl.current=clean;pending.current?.abort();invalidate();setApiUrl(clean);
-    localStorage.setItem('interiorai_api_url',clean);
+    saveApiUrl(clean);
   },[invalidate]);
   useEffect(()=>onAuthStateChanged(auth,u=>{
     pending.current?.abort(); invalidate();setUser(u);setAuthChecked(true);
@@ -68,7 +68,7 @@ function AppInner() {
     if(snap.exists()){
       const {url,active,key}=snap.data();
       if(typeof url==='string' && active){
-        if(typeof key==='string' && key)localStorage.setItem('interiorai_connection_key',key);
+        if(typeof key==='string' && key)saveApiUrl(url,key);
         changeUrl(url);setSetup(false);
       }
     }
