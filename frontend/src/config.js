@@ -7,7 +7,7 @@ export function getApiUrl() {
   return url.replace(/\/+$/, '');
 }
 export function getConnectionKey() {
-  return localStorage.getItem("interiorai_connection_key") || "";
+  return localStorage.getItem("interiorai_connection_key") || process.env.REACT_APP_CONNECTION_KEY || "";
 }
 export function apiHeaders(extra = {}) {
   const key = getConnectionKey();
