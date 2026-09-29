@@ -13,6 +13,11 @@
 .tool-panel .primary-action{background:#c9a84c;color:#151515;font-weight:600;margin:10px 0}
 .current-room{display:block;max-width:100%;max-height:460px;margin:22px auto;object-fit:contain;border-radius:12px}
 .selection-canvas{display:block;width:100%;height:auto;touch-action:none;cursor:crosshair;border-radius:10px}
+.region-canvas-wrap{position:relative}
+.region-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:10px;
+  background:rgba(20,18,12,.55);border-radius:10px;color:#fff;font-size:14px}
+.region-spinner{width:20px;height:20px;border:3px solid rgba(255,255,255,.25);border-top-color:#e6b846;
+  border-radius:50%;animation:spin .8s linear infinite}
 /* No auto-centering here: region-picker sits directly under other full-width
    buttons/rows in each tool panel (e.g. Object Recolor's "Single area" row) —
    centering it with `margin:0 auto` on wide screens shifted its own button row

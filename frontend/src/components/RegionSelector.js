@@ -123,9 +123,17 @@ export default function RegionSelector({ image, regions = EMPTY_REGIONS, selecti
       {!multi && <button disabled={busy || !selection} onClick={()=>onSelect(null)}>Clear selection</button>}
     </div>
     <p>{mode==='box'?'Drag across the image to mark the area to change.':mode==='point'?'Click an area, then review the highlighted selection before applying.':'Click a detected area in the image or select it from the list.'}</p>
-    <canvas ref={canvas} className="selection-canvas" aria-label="Room area selection" onPointerDown={down}
-      onPointerMove={e=>{if(start.current)setDraft(box(start.current,point(e)));}} onPointerUp={up}
-      onPointerCancel={()=>{start.current=null;setDraft(null);}} />
+    <div className="region-canvas-wrap">
+      <canvas ref={canvas} className="selection-canvas" aria-label="Room area selection" onPointerDown={down}
+        onPointerMove={e=>{if(start.current)setDraft(box(start.current,point(e)));}} onPointerUp={up}
+        onPointerCancel={()=>{start.current=null;setDraft(null);}} />
+      {/* Clicks are silently ignored while !ready (see down() above) -- without this,
+          nothing visibly happens and it looks like the tool is broken, not loading
+          (reported: "nothing happens when I click, no console error either"). */}
+      {!ready && !error && <div className="region-loading" role="status" aria-live="polite">
+        <span className="region-spinner" aria-hidden="true"/>Finding areas…
+      </div>}
+    </div>
     {error && <p role="alert">{error}</p>}
     {!furnish && <div className="region-list">{regions.map((r,i)=>{
       const isActive = multi ? selections.some(s=>s.region_id===r.id) : selection?.region_id===r.id;
