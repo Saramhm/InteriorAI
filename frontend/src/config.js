@@ -4,7 +4,7 @@ const ENV_URL = process.env.REACT_APP_API_URL || "http://localhost:7860";
 // before a fix) and would silently win over the current default forever. Bump CONFIG_GEN to
 // force every saved browser connection to reset to the current default; a fresh manual
 // "Connect" made after that still sticks normally until the next bump.
-const CONFIG_GEN = "3";
+const CONFIG_GEN = "4";
 const VERSION_KEY = "interiorai_config_gen";
 export function saveApiUrl(url, key) {
   localStorage.setItem("interiorai_api_url", url);
