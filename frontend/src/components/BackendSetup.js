@@ -3,7 +3,21 @@ import { motion, AnimatePresence } from "framer-motion";
 import { getApiUrl, getConnectionKey, saveApiUrl } from "../config";
 import "./BackendSetup.css";
 
+// Fixed, always-on GPU backend -- baked in so this mode needs no typing at all,
+// unlike Kaggle/Colab (a fresh URL every session) or Local Dev.
+const GPU_URL = "https://interiorai-gpu.novaralab.net";
+const GPU_KEY = "Ou4L407SS-EsQSpmTXybb8cnMbaSD4TtXg9dmjNsmFc";
+
 const MODES = [
+  {
+    id: "gpu",
+    icon: "🚀",
+    label: "Our GPU Server",
+    desc: "Always-on dedicated backend — nothing to type, just Connect.",
+    placeholder: GPU_URL,
+    defaultVal: GPU_URL,
+    defaultKey: GPU_KEY,
+  },
   {
     id: "colab",
     icon: "⚡",
@@ -25,7 +39,7 @@ const MODES = [
 export default function BackendSetup({ onConnect }) {
   const saved = getApiUrl();
   const savedKey = getConnectionKey();
-  const guessMode = saved.includes("localhost") ? "local" : "colab";
+  const guessMode = saved.includes("localhost") ? "local" : saved === GPU_URL ? "gpu" : saved ? "colab" : "gpu";
 
   const [mode, setMode] = useState(guessMode);
   const [url, setUrl] = useState(saved);
@@ -38,6 +52,7 @@ export default function BackendSetup({ onConnect }) {
   const handleModeSwitch = (m) => {
     setMode(m.id);
     setUrl(m.defaultVal);
+    if (m.defaultKey !== undefined) setConnectionKey(m.defaultKey);
     setStatus("idle");
     setErrorMsg("");
   };
